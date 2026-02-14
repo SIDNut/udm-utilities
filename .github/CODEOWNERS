@@ -1,7 +1,7 @@
-podman-update/build @mazzy89 @boostchicken
-run-pihole @boostchicken
-on_boot_scripts @boostchicken
-wireguard-go @boostchicken
-dns-common @boostchicken
-container-commmon @boostchicken
-on-boot-script/remote_install.sh @gtrabanco
+container-commmon @boostchicken @bslatyer
+dns-common @boostchicken @bslatyer
+on-boot-script @boostchicken @bslatyer
+on-boot-script-2.x @boostchicken @bslatyer
+podman-update @boostchicken @bslatyer
+run-pihole @boostchicken @bslatyer
+wireguard-go @boostchicken @bslatyer
