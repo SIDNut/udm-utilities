@@ -1,46 +1,37 @@
-# This is a basic workflow to help you get started with Actions
+name: Pi-hole (DoH)
 
-name: Pihole DoH Container
+permissions:
+  contents: read
 
-# Controls when the action will run. 
 on:
   workflow_dispatch:
-  # Triggers the workflow on push or pull request events but only for the master branch
   push:
     paths:
-     - run-pihole/Dockerfile
+      - run-pihole/Dockerfile
   schedule:
     - cron: "0 0 */15 * *"
-  
 
 jobs:
   buildx:
     runs-on: ubuntu-latest
     steps:
-    
       - name: Set the version
         id: set_version
         run: |
-          echo VERSION=$(curl --silent "https://api.github.com/repos/pi-hole/docker-pi-hole/releases/latest" | jq -r '.["tag_name"]')>> $GITHUB_ENV
-      -
-        name: Checkout
-        uses: actions/checkout@v3
-      -
-        name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-      -
-        name: Set up Docker Buildx
+          echo VERSION=$(curl --silent "https://api.github.com/repos/pi-hole/docker-pi-hole/releases/latest" | jq -r '.["tag_name"]') >> $GITHUB_ENV
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3.7.0
+      - name: Set up Docker Buildx
         id: buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3.12.0
         with:
           version: v0.10.1
-      -
-        name: Login to Docker Hub
-        uses: docker/login-action@v2
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3.7.0
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }} 
-
-      -
-        name: build pihole $VERSION
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build Pi-hole DoH image
         run: docker buildx build --provenance=false --platform=linux/amd64,linux/arm64 --build-arg VERSION=${{ env.VERSION }} run-pihole -t boostchicken/pihole:latest -t boostchicken/pihole:${{ env.VERSION }} --push
