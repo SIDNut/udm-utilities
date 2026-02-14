@@ -5,14 +5,14 @@ case "$(ubnt-device-info firmware || true)" in
 1*)
     DATA_DIR="/mnt/data"
     ;;
-2* | 3* | 4*)
+2* | 3* | 4* | 5*)
     DATA_DIR="/data"
     ;;
 *)
     echo "ERROR: No persistent storage found." 1>&2
     exit 1
     ;;
-esac 
+esac
 ## configuration variables:
 VLAN=5
 IPV4_IP="10.0.5.3"
