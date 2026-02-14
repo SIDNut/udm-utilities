@@ -1,7 +1,1 @@
-container-commmon @boostchicken @bslatyer
-dns-common @boostchicken @bslatyer
-on-boot-script @boostchicken @bslatyer
-on-boot-script-2.x @boostchicken @bslatyer
-podman-update @boostchicken @bslatyer
-run-pihole @boostchicken @bslatyer
-wireguard-go @boostchicken @bslatyer
+unifi-utilities@admins
