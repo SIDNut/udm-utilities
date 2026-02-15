@@ -1,32 +1,40 @@
 ---
-name: Bug report
+name: Report a Bug
 about: Create a report to help us improve
-title: ''
-labels: ''
-assignees: ''
-
+title: "[BUG]"
+labels: bug
+assignees:
+  - boostchicken
+  - bslatyer
 ---
 
-**Describe the bug**
+## Describe the bug
+
 A clear and concise description of what the bug is.
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
+## To Reproduce
+
+Steps to reproduce the behaviour:
+
+1. Go to "..."
+2. Click on "..."
+3. Scroll down to "..."
 4. See error
 
-**Expected behavior**
+## Expected behaviour
+
 A clear and concise description of what you expected to happen.
 
-**Screenshots**
+## Screenshots
+
 If applicable, add screenshots to help explain your problem.
 
-**UDM Information**
- - Variant [e.g. Dream Machine, Dream Machine Pro]
- - Firmware Version: [e.g. 1.6.3, 1.7.2-rc4]
- - Controller Version [e.g 5.14.9]
+## Device Information
 
-**Additional context**
+- Variant, for example UniFi Cloud Gateway or UniFi Dream Machine Pro SE
+- UniFi OS (UOS), for example 5.x.x
+- UniFi Network Application (UNA), for example 10.x.x
+
+## Additional context
+
 Add any other context about the problem here.
