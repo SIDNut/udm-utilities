@@ -30,12 +30,9 @@ vlans="br0"                                          # "br0 br100 br101..."
 domain="example.invalid"                             # DNS domain
 dns6="[2001:4860:4860::8888],[2001:4860:4860::8844]" # Google
 
-CONTAINER=att-ipv6
 confdir=${DATA_DIR}/att-ipv6
 
 # main
-mkdir -p "${confdir}/dhcpcd"
-
 test -f "${confdir}/dhcpcd.conf" || {
   : >"${confdir}/dhcpcd.conf.tmp"
   cat >>"${confdir}/dhcpcd.conf.tmp" <<EOF
@@ -90,12 +87,32 @@ EOF
   mv "${confdir}/att-ipv6-dnsmasq.conf.tmp" "${confdir}/att-ipv6-dnsmasq.conf"
 }
 
-if podman container exists "$CONTAINER"; then
-  podman start "$CONTAINER"
-else
-  podman run -d --restart=always --name "$CONTAINER" -v "${confdir}/dhcpcd.conf:/etc/dhcpcd.conf" -v "${confdir}/dhcpcd:/var/lib/dhcpcd" --net=host --privileged ghcr.io/michaelw/dhcpcd
+if ! dpkg -s dhcpcd5 >/dev/null 2>&1; then
+  apt-get update
+  DEBIAN_FRONTEND=noninteractive apt-get install -y dhcpcd5
 fi
 
-# Fix DHCP, assumes DHCPv6 is turned off in UI
-cp "${confdir}/att-ipv6-dnsmasq.conf" /run/dnsmasq.conf.d/
+restart_dhcpcd=0
+if [ ! -f /etc/dhcpcd.conf ] || ! cmp -s "${confdir}/dhcpcd.conf" /etc/dhcpcd.conf; then
+  cp "${confdir}/dhcpcd.conf" /etc/dhcpcd.conf
+  restart_dhcpcd=1
+fi
+
+if [ "$restart_dhcpcd" -eq 1 ]; then
+  start-stop-daemon -K -x /usr/sbin/dhcpcd
+fi
+
+# Warn if UniFi's DHCPv6 client is still active; this setup expects it disabled in UI.
+if pgrep -x odhcp6c >/dev/null 2>&1; then
+  echo "WARNING: odhcp6c is running. Disable WAN/network DHCPv6 in the UniFi UI to avoid conflicts with att-ipv6." >&2
+fi
+
+# Fix DHCP
+if [ -d /run/dnsmasq.dhcp.conf.d ]; then
+  # UniFi Network > 9.3.29 (commonly on UniFi OS 5.x)
+  cp "${confdir}/att-ipv6-dnsmasq.conf" /run/dnsmasq.dhcp.conf.d/att-ipv6.conf
+else
+  # older versions
+  cp "${confdir}/att-ipv6-dnsmasq.conf" /run/dnsmasq.conf.d/att-ipv6.conf
+fi
 start-stop-daemon -K -q -x /usr/sbin/dnsmasq
